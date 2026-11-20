@@ -40,5 +40,7 @@ body.overlay-open{overflow:hidden}.program-backdrop{position:fixed;inset:0;z-ind
 
 .vo2-chart-caption{justify-content:flex-end}.month-tick{font-size:13px;font-weight:700}@media(max-width:600px){.month-tick{font-size:17px}.vo2-marker{r:7px}.vo2-point circle[role="button"]{r:16px}}
 
+.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
 /* Static phone view: the source app remains unchanged. */
 #home-run-log,#home-cal-open,#cal-log,#run-log,#ride-log,#ride-feature-log,#overlay-log,.edit-cal,.edit-run,.edit-ride,.edit-activity,.edit-endurance{display:none!important}
