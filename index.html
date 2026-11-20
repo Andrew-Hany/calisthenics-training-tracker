@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142535">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23dff277'/%3E%3Ctext x='11' y='47' font-family='Georgia' font-size='45' fill='%23142535'%3EC%3C/text%3E%3C/svg%3E">
+  <title>Training Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">C<span>5</span></span><div><strong>TRAINING</strong><small>CALISTHENICS · RUN · RIDE</small></div></div>
+      <div class="sidebar-rule"></div>
+      <nav aria-label="Main navigation">
+        <button class="nav-item active" data-view="home"><span class="nav-icon">⌂</span> Home <span class="nav-arrow">↗</span></button>
+        <button class="nav-item" data-view="calisthenics"><span class="nav-icon">◇</span> Calisthenics <span class="nav-arrow">↗</span></button>
+        <button class="nav-item" data-view="running"><span class="nav-icon">↗</span> Running <span class="nav-arrow">↗</span></button>
+        <button class="nav-item" data-view="cycling"><span class="nav-icon">◌</span> Cycling <span class="nav-arrow">↗</span></button>
+        <button class="nav-item" data-view="activities"><span class="nav-icon">≡</span> Activities <span class="nav-arrow">↗</span></button>
+      </nav>
+      <div class="side-bottom"><div class="eyebrow light">THIS WEEK · CALISTHENICS</div><p>Five focused days.<br>Fill them in.</p><div class="week-dots" id="week-dots"><button data-day="1" aria-label="Monday program">M</button><button data-day="2" aria-label="Tuesday program">T</button><button data-day="3" aria-label="Wednesday program">W</button><button data-day="4" aria-label="Thursday program">T</button><button data-day="5" aria-label="Friday program">F</button></div><div class="file-caption">Filled circles are completed. Press a day to see its plan.</div><a class="file-link" href="data/calisthenics_training.xlsx">↓ Download Excel log</a></div>
+    </aside>
+    <div class="main-wrap">
+      <header class="topbar"><div class="mobile-brand">C<span>5</span> <small>TRAINING</small></div><div class="top-context"><span id="crumb">HOME</span><label class="year-picker">YEAR <select id="year-filter" aria-label="View training year"><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option></select></label></div><div class="top-status"><span class="status-dot"></span><span id="save-status">Public Excel snapshot</span></div></header>
+      <main id="main" tabindex="-1"><div class="loading">Loading your training journal…</div></main>
+      <nav class="mobile-nav" aria-label="Mobile navigation"><button data-view="home">Home</button><button data-view="calisthenics">Plan</button><button data-view="running">Running</button><button data-view="cycling">Cycling</button><button data-view="activities">Activities</button></nav>
+    </div>
+  </div>
+  <div id="program-overlay-root"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
