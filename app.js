@@ -23,16 +23,16 @@ function vo2GapLabel(a,b){
 function selectVo2Point(target){
   const point=target.closest?.('[data-vo2-point]');
   if(!point)return;
-  const key=point.dataset.vo2Point;
-  if(vo2Selection.length===2)vo2Selection=[];
-  if(vo2Selection.some(selected=>selected.dataset.vo2Point===key))return;
-  vo2Selection.push(point);
+  const existing=vo2Selection.findIndex(selected=>selected.dataset.vo2Point===point.dataset.vo2Point);
+  if(existing>=0)vo2Selection.splice(existing,1);
+  else{if(vo2Selection.length===2)vo2Selection=[];vo2Selection.push(point)}
   main.querySelectorAll('[data-vo2-point]').forEach(dot=>dot.classList.toggle('selected',vo2Selection.includes(dot)));
   const output=main.querySelector('#vo2-comparison');
   if(!output)return;
-  output.hidden=false;
+  output.hidden=vo2Selection.length===0;
+  if(!vo2Selection.length)return;
   const fromValue=output.querySelector('.vo2-from-value'),toValue=output.querySelector('.vo2-to-value'),delta=output.querySelector('.vo2-delta'),gap=output.querySelector('.vo2-gap');
-  if(vo2Selection.length===1){fromValue.textContent=Number(point.dataset.vo2Value).toFixed(1);toValue.textContent='—';delta.textContent='';gap.textContent='Select another dot';return}
+  if(vo2Selection.length===1){fromValue.textContent=Number(vo2Selection[0].dataset.vo2Value).toFixed(1);toValue.textContent='—';delta.textContent='';gap.textContent='Select another dot';return}
   const [first,second]=vo2Selection;
   const from=Number(first.dataset.vo2Value),to=Number(second.dataset.vo2Value),change=to-from;
   fromValue.textContent=from.toFixed(1);
