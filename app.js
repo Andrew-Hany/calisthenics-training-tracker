@@ -10,7 +10,8 @@ main.addEventListener('focusin',event=>{const target=event.target.closest?.('[da
 main.addEventListener('focusout',()=>chartTooltip.classList.remove('visible'));
 let state={program:[],baselines:[],activities:[],runs:[],rides:[]};
 let view='home';
-let selectedYear=Math.max(2026,Math.min(2028,new Date().getFullYear()));
+const savedYear=Number(localStorage.getItem('trainingYear'));
+let selectedYear=[2026,2027,2028].includes(savedYear)?savedYear:Math.max(2026,Math.min(2028,new Date().getFullYear()));
 $('#year-filter').value=String(selectedYear);
 const inSelectedYear=entry=>String(entry.date||'').startsWith(`${selectedYear}-`);
 const yearAnchor=()=>selectedYear===new Date().getFullYear()?todayISO():`${selectedYear}-12-31`;
@@ -192,6 +193,6 @@ function renderActivities(){const sorted=allEntries().filter(inSelectedYear).sor
 function render(){renderWeekDots();if(view==='home')renderHome();else if(view==='calisthenics')renderCalisthenics();else if(view==='workout')renderWorkout();else if(view==='running'&&!runningFormOpen)renderRunningOverview();else if(view==='cycling'&&!cyclingFormOpen)renderCyclingOverview();else if(view==='running'||view==='cycling')renderEndurance(view);else renderActivities()}
 async function loadState(){const response=await fetch('data/state.json',{cache:'no-store'});if(!response.ok)throw new Error('Could not read the Excel log');state=await response.json()}
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{enduranceEdit=null;runningFormOpen=false;cyclingFormOpen=false;nav(button.dataset.view)}));
-$('#year-filter').addEventListener('change',event=>{selectedYear=Number(event.target.value);$('#crumb').textContent=(view==='workout'?`WORKOUT / DAY ${workoutDay}`:`${view.toUpperCase()} / ${selectedYear}`);if(view==='workout'||runningFormOpen||cyclingFormOpen)return;render()});
+$('#year-filter').addEventListener('change',event=>{selectedYear=Number(event.target.value);localStorage.setItem('trainingYear',String(selectedYear));$('#crumb').textContent=(view==='workout'?`WORKOUT / DAY ${workoutDay}`:`${view.toUpperCase()} / ${selectedYear}`);if(view==='workout'||runningFormOpen||cyclingFormOpen)return;render()});
 document.querySelectorAll('#week-dots button').forEach(button=>button.addEventListener('click',()=>openProgramDay(Number(button.dataset.day))));
 try{await loadState();$('#crumb').textContent=`HOME / ${selectedYear}`;render()}catch(error){main.innerHTML=`<div class="panel"><h1>Could not open the training log</h1><p class="error">${esc(error.message)}</p><p>Keep the local website launcher running, then reload this page.</p></div>`;$('#save-status').textContent='Snapshot unavailable'}
