@@ -74,6 +74,7 @@ const inSelectedYear=entry=>String(entry.date||'').startsWith(`${selectedYear}-`
 const yearAnchor=()=>selectedYear===new Date().getFullYear()?todayISO():`${selectedYear}-12-31`;
 let workoutDay=null;
 let workoutDate=null;
+let workoutOriginDate=null;
 let enduranceEdit=null;
 let runningFormOpen=false;
 let cyclingFormOpen=false;
@@ -196,18 +197,18 @@ function programGuidance(day){return day.trainingInstructions?`<div class="progr
 document.addEventListener('keydown',event=>{if(event.key==='Escape')closeProgramDay()});
 
 function renderWorkout(){
-  const day=state.program[workoutDay-1],existing=activityFor(workoutDate,workoutDay);
+  const day=state.program[workoutDay-1],existing=workoutOriginDate?activityFor(workoutOriginDate,workoutDay):null;
   const exercises=day.exercises.map(ex=>{
     const old=existing?.sets?.[ex.id]||[];
     const labels=ex.unilateral?'<div class="side-labels"><span></span><span>Left</span><span>Right</span></div>':'';
     const inputs=Array.from({length:ex.sets},(_,i)=>{const item=old[i];const field=(side,value)=>`<input type="number" min="0" max="10000" step="${ex.unit.startsWith('sec')?'0.1':'1'}" inputmode="decimal" aria-label="${esc(ex.name)} set ${i+1}${side?` ${side}`:''}" data-ex="${ex.id}" data-set="${i}" ${side?`data-side="${side}"`:''} value="${value??''}" placeholder="—">`;return `<div class="set-row ${ex.unilateral?'sides':''}"><span>SET ${i+1}</span>${ex.unilateral?field('left',item?.left)+field('right',item?.right):field('',item)}</div>`}).join('');
     return `<article class="exercise"><img src="assets/${esc(ex.image)}" alt="${esc(ex.name)}"><div class="exercise-info"><span class="eyebrow">${esc(ex.unit)}</span><h2>${esc(ex.name)}</h2><span class="exercise-target">TARGET · ${ex.sets} × ${esc(ex.target)}</span><p>${esc(ex.cue)}</p></div><div class="set-grid">${labels}${inputs}</div></article>`;
   }).join('');
-  main.innerHTML=`<button class="text-button" id="back-home">← Home</button><div class="workout-top"><div><div class="eyebrow">DAY ${day.day} / ${esc(day.goal)}</div><h1>${esc(day.focus)}</h1><p>Enter the value for each set. For left and right moves, record both sides.</p></div><label class="date-field">WORKOUT DATE<input id="workout-date" type="date" min="2026-01-01" max="2028-12-31" value="${esc(workoutDate)}"></label></div><form id="workout-form"><div class="workout-grid">${exercises}</div><div class="workout-footer"><label class="field">Form<select id="form-rating"><option value="">Choose after training</option><option value="Good" ${existing?.form==='Good'?'selected':''}>Good</option><option value="Needs work" ${existing?.form==='Needs work'?'selected':''}>Needs work</option></select></label><label class="field">Discomfort<select id="discomfort"><option value="">Choose after training</option><option value="None" ${existing?.discomfort==='None'?'selected':''}>None</option><option value="Mild" ${existing?.discomfort==='Mild'?'selected':''}>Mild</option><option value="Stop" ${existing?.discomfort==='Stop'?'selected':''}>Stop</option></select></label><label class="field" style="grid-column:1/-1">Notes <textarea id="notes" placeholder="Anything you want to remember about this workout">${esc(existing?.notes||'')}</textarea></label></div><div class="save-row"><div class="save-help">Saving adds the sets to your local Excel log. If you save the same day and date again, it updates that workout.</div><button class="button dark" type="submit" id="save-button">Save workout to Excel ↗</button></div></form>`;
+  main.innerHTML=`<button class="text-button" id="back-home">← Home</button><div class="workout-top"><div><div class="eyebrow">DAY ${day.day} / ${esc(day.goal)}</div><h1>${esc(day.focus)}</h1><p>Enter the value for each set. For left and right moves, record both sides.</p></div><label class="date-field">WORKOUT DATE<input id="workout-date" type="date" min="2026-01-01" max="2028-12-31" value="${esc(workoutDate)}"></label></div><form id="workout-form"><div class="workout-grid">${exercises}</div><div class="workout-footer"><label class="field">Form<select id="form-rating"><option value="">Choose after training</option><option value="Good" ${existing?.form==='Good'?'selected':''}>Good</option><option value="Needs work" ${existing?.form==='Needs work'?'selected':''}>Needs work</option></select></label><label class="field">Discomfort<select id="discomfort"><option value="">Choose after training</option><option value="None" ${existing?.discomfort==='None'?'selected':''}>None</option><option value="Mild" ${existing?.discomfort==='Mild'?'selected':''}>Mild</option><option value="Stop" ${existing?.discomfort==='Stop'?'selected':''}>Stop</option></select></label><label class="field" style="grid-column:1/-1">Notes <textarea id="notes" placeholder="Anything you want to remember about this workout">${esc(existing?.notes||'')}</textarea></label></div><div class="save-row"><div class="save-help">Changing the date moves this workout when you save. A workout already saved on the new date will not be overwritten.</div><button class="button dark" type="submit" id="save-button">Save workout to Excel ↗</button></div></form>`;
   if(day.trainingInstructions)$('#workout-form').insertAdjacentHTML('afterbegin',programGuidance(day));
   $('#back-home').addEventListener('click',()=>nav('home'));
   $('#workout-form').addEventListener('submit',saveWorkout);
-  $('#workout-date').addEventListener('change',e=>{workoutDate=e.target.value;renderWorkout()});
+  $('#workout-date').addEventListener('change',e=>{workoutDate=e.target.value});
 }
 
 function saveWorkout(event){event.preventDefault()}
